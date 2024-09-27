@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="stile.css">
+   <title>Paint.js</title>
+
+   <script type="module">
+// Constants
+const MODES = {
+    DRAW: 'draw',
+    ERASE: 'erase',
+    RECTANGLE: 'rectangle',
+    ELLIPSE: 'ellipse',
+    PICKER: 'picker'
+}
+
+// Utilities
+const $ = selector => document.querySelector(selector);
+const $$ = selector => document.querySelectorAll(selector);
+
+// Elements
+const $canvas = $('#canvas');
+const ctx = $canvas.getContext('2d');
+
+// State
+let isDrawing = false;
+let startX, startY;
+let lastX = 0;
+let lastY = 0;
+let mode = MODES.DRAW; // Asegúrate de que sea MODES
+
+// Events
+$canvas.addEventListener('mousedown', startDrawing);
+$canvas.addEventListener('mousemove', draw);
+$canvas.addEventListener('mouseup', stopDrawing);
+$canvas.addEventListener('mouseleave', stopDrawing);
+
+// Methods
+function startDrawing(event) {
+    isDrawing = true;
+    const { offsetX, offsetY } = event;
+
+    // Guardar las coordenadas iniciales
+    ;[startX, startY] = [offsetX, offsetY];
+    ;[lastX, lastY] = [offsetX, offsetY];
+
+    // Comenzar un nuevo trazado
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY); // Mover a la posición inicial
+}
+
+function draw(event) {
+    if (!isDrawing) return; // Si no se está dibujando, salimos de la función
+
+    const { offsetX, offsetY } = event; // Obtenemos las coordenadas del mouse
+
+    // Dibujar una línea entre coordenadas actuales y las nuevas
+    ctx.lineTo(offsetX, offsetY); // Añadir línea a la posición actual
+    ctx.stroke(); // Aplicar el trazo
+
+    // Actualizar las próximas coordenadas
+    [lastX, lastY] = [offsetX, offsetY]; 
+}
+
+function stopDrawing() {
+    isDrawing = false; 
+    ctx.beginPath();
+}
+   </script>
+</head>
+<body>
+
+   <main>
+
+      <h1>
+         <img src="./icon.png" alt="Logo">
+         Paint.JS
+      </h1>
+
+      <div id="container">
+         <header>
+            <button>File</button>
+            <button>Edit</button>
+            <button>View</button>
+            <button>Image</button>
+            <button>Option</button>
+            <button>Help</button>
+         </header>
+      
+         <section>
+            <canvas id="canvas"></canvas>
+         </section>
+         
+         <footer>
+            <input type="color" name="" id="">
+         </footer>
+      </div>
+
+   </main>
+
+</body>
+</html>
